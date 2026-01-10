@@ -1,20 +1,20 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import RoomIdContextProvider from "./context/RoomIdContext";
+import { Toaster } from 'sonner'
+import DarkModeProvider from "./context/DarkModeContext";
+import AppBar from "./components/AppBar";
+import { Bricolage_Grotesque } from "next/font/google";
+import UserIdContextProvider from "./context/UserIdContext";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const bricolage_grotesque_init = Bricolage_Grotesque({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "livewire",
-  description: "Chat anytime anywhere",
+  title: "LiveWire",
+  description: "Real-time chat rooms - Connect instantly",
 };
 
 export default function RootLayout({
@@ -23,11 +23,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${bricolage_grotesque_init.className}`}
+        suppressHydrationWarning
       >
-        {children}
+        <DarkModeProvider>
+          <UserIdContextProvider>
+            <RoomIdContextProvider>
+              <AppBar />
+              {children}
+              <Toaster />
+            </RoomIdContextProvider>
+          </UserIdContextProvider>
+        </DarkModeProvider>
       </body>
     </html>
   );
