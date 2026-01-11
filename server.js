@@ -1,7 +1,7 @@
-import {Server} from 'socket.io';
+import { Server } from 'socket.io';
 import crypto from 'crypto';
 
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
 const io = new Server(PORT, {
     cors: {
         origin: '*',
@@ -34,7 +34,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('join', ({ username, roomId }) => {
-       
+
         const room = io.sockets.adapter.rooms.get(roomId);
 
         if (!room) {
@@ -46,7 +46,7 @@ io.on('connection', (socket) => {
         socket.currentRoomId = roomId;
         socket.join(roomId);
 
-        
+
         socket.emit('roomJoined', {
             roomId,
             userId: socket.id,
@@ -87,7 +87,7 @@ io.on('connection', (socket) => {
 
     socket.on('leave', () => {
         if (socket.currentRoomId) {
-            
+
             socket.to(socket.currentRoomId).emit('userLeft', {
                 userId: socket.id,
                 message: 'A user left the room'
