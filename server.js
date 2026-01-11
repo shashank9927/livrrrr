@@ -4,8 +4,16 @@ import crypto from 'crypto';
 
 const PORT = process.env.PORT || 8080;
 
-
-const httpServer = createServer();
+// Create HTTP server with health check endpoint (required for Render)
+const httpServer = createServer((req, res) => {
+    if (req.url === '/' || req.url === '/health') {
+        res.writeHead(200, { 'Content-Type': 'text/plain' });
+        res.end('OK');
+    } else {
+        res.writeHead(404);
+        res.end();
+    }
+});
 
 const io = new Server(httpServer, {
     cors: {
