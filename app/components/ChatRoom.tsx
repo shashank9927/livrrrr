@@ -53,10 +53,6 @@ export default function ChatRoom({ roomId, connectionStatus, lastMessage, onSend
         }
     };
 
-    if (connectionStatus !== 'connected') {
-        return <div>Connecting to chat room...</div>;
-    }
-
     const copyToClipboard = () => {
         navigator.clipboard.writeText(roomId);
         toast.success("Room Code Copied successfully");
@@ -65,7 +61,15 @@ export default function ChatRoom({ roomId, connectionStatus, lastMessage, onSend
     return (
         <div className="w-full max-w-2xl">
             <div className="w-full flex justify-between items-center px-4 py-2 rounded-lg border">
-                <h2 className="">Room Code: {roomId}</h2>
+                <div className="flex items-center gap-2">
+                    <h2>Room Code: {roomId}</h2>
+                    {connectionStatus === 'reconnecting' && (
+                        <span className="text-xs text-yellow-600 dark:text-yellow-400 flex items-center gap-1">
+                            <span className="inline-block h-2 w-2 rounded-full bg-yellow-500 animate-pulse"></span>
+                            Reconnecting...
+                        </span>
+                    )}
+                </div>
                 <div className="flex items-center gap-3">
                     <span onClick={copyToClipboard} className="cursor-pointer">
                         <CopyIcon className='h-4 w-4 hover:scale-110' />
@@ -99,12 +103,14 @@ export default function ChatRoom({ roomId, connectionStatus, lastMessage, onSend
                         value={inputMessage}
                         onChange={(e) => setInputMessage(e.target.value)}
                         onKeyUp={(e) => e.key === 'Enter' && handleSendMessage()}
-                        className="w-full border border-gray-300 bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-600 h-10 px-5 rounded-lg text-sm focus:outline-none"
-                        placeholder="Type a message..."
+                        disabled={connectionStatus !== 'connected'}
+                        className="w-full border border-gray-300 bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-600 h-10 px-5 rounded-lg text-sm focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                        placeholder={connectionStatus === 'connected' ? "Type a message..." : "Reconnecting..."}
                     />
                     <button
                         onClick={handleSendMessage}
-                        className="cursor-pointer hover:bg-[#1E41B2] bg-blue-600 text-white py-2 px-4 rounded-lg ml-2"
+                        disabled={connectionStatus !== 'connected'}
+                        className="cursor-pointer hover:bg-[#1E41B2] bg-blue-600 text-white py-2 px-4 rounded-lg ml-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600"
                     >
                         Send
                     </button>

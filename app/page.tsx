@@ -6,6 +6,7 @@ import JoinCreate from './components/JoinCreate'
 import { useWebSocket } from './hooks/useWebSocket'
 import { toast } from 'sonner'
 import LiveWireIcon from './components/icons/LiveWireIcon'
+import ConnectionStatus from './components/ConnectionStatus'
 
 export default function Home() {
   const [roomId, setRoomId] = useState<string | null>(null)
@@ -42,6 +43,7 @@ export default function Home() {
 
   return (
     <main className="flex min-h-[90vh] flex-col items-center justify-center p-0 max-sm:p-4">
+      <ConnectionStatus status={connectionStatus} />
       <h1 className="text-4xl font-bold mb-8 flex space-x-3 items-center">
         <span><LiveWireIcon size={32} color="#01ff04" /></span>
         <span>LiveWire</span>

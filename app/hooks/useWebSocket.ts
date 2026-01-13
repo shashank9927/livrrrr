@@ -4,7 +4,7 @@ import { toast } from 'sonner'
 import { useUserId } from './useUserId'
 import { io, Socket } from 'socket.io-client'
 
-type ConnectionStatus = 'connecting' | 'connected' | 'disconnected'
+type ConnectionStatus = 'connecting' | 'connected' | 'disconnected' | 'reconnecting'
 
 export interface WebSocketMessage {
     type: string
@@ -24,21 +24,33 @@ export function useWebSocket() {
             autoConnect: true,
             reconnection: true,
             reconnectionDelay: 1000,
-            reconnectionAttempts: 5
+            reconnectionDelayMax: 5000,
+            reconnectionAttempts: Infinity,
+            timeout: 20000
         })
 
         
         socket.current.on('connect', () => {
             setConnectionStatus('connected')
+            toast.success('Connected to server')
         })
 
         socket.current.on('disconnect', () => {
-            setConnectionStatus('disconnected')
+            setConnectionStatus('reconnecting')
+            toast.info('Connection lost. Reconnecting...')
+        })
+
+        socket.current.on('reconnect_attempt', () => {
+            setConnectionStatus('reconnecting')
+        })
+
+        socket.current.on('reconnect', () => {
+            setConnectionStatus('connected')
+            toast.success('Reconnected successfully!')
         })
 
         socket.current.on('connect_error', () => {
-            toast.error('Socket.IO connection error')
-            setConnectionStatus('disconnected')
+            setConnectionStatus('reconnecting')
         })
 
         
