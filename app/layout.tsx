@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${bricolage_grotesque_init.className}`}
+        className={`${bricolage_grotesque_init.className} bg-white dark:bg-black text-gray-900 dark:text-white transition-colors duration-200`}
         suppressHydrationWarning
       >
         <DarkModeProvider>
